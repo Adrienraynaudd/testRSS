@@ -1,0 +1,17 @@
+﻿<Window x:Class="testRSS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RSS Reader" Height="350" Width="525">
+    <Grid>
+        <ListBox x:Name="rssListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Title.Text}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Summary.Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
