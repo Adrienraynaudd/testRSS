@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel.Syndication;
+using System.Text;
 using System.Windows;
 using System.Xml;
 
@@ -20,7 +22,7 @@ namespace testRSS
         private void LoadRss()
         {
             RssReader rssReader = new RssReader();
-            List<SyndicationItem> items = rssReader.ReadRss("https://www.lemonde.fr/rss/une.xml");
+            List<SyndicationItem> items = rssReader.ReadRss("https://www.courrierinternational.com/feed/rubrique/france/rss.xml");
 
             rssListBox.ItemsSource = items;
         }
@@ -35,23 +37,37 @@ namespace testRSS
 
             try
             {
-                XmlReader reader = XmlReader.Create(url);
-                SyndicationFeed feed = SyndicationFeed.Load(reader);
-
-                if (feed != null)
+                using (System.Net.WebClient client = new System.Net.WebClient())
                 {
-                    foreach (SyndicationItem item in feed.Items)
+                    using (Stream stream = client.OpenRead(url))
                     {
-                        items.Add(item);
+                        // Use StreamReader to detect the encoding
+                        using (StreamReader streamReader = new StreamReader(stream, detectEncodingFromByteOrderMarks: true))
+                        {
+                            using (XmlReader reader = XmlReader.Create(streamReader))
+                            {
+                                SyndicationFeed feed = SyndicationFeed.Load(reader);
+
+                                if (feed != null)
+                                {
+                                    foreach (SyndicationItem item in feed.Items)
+                                    {
+                                        items.Add(item);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.ToString());
             }
 
             return items;
         }
+
+
     }
 }
